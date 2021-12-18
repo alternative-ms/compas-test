@@ -25,10 +25,10 @@ public sealed class CompassController : MonoBehaviour
     private Text _textCompassAngle;
 
     [SerializeField]
-    private bool _smoothValues = false;
+    private bool _smoothValues = true;
 
     [SerializeField]
-    private bool _lerpValues = false;
+    private bool _lerpValues = true;
 
     private void Start()
     {
@@ -71,13 +71,4 @@ public sealed class CompassController : MonoBehaviour
         _imageCompassArrow.rectTransform.localEulerAngles = new Vector3(0, 0, _heading);
     }
 
-    public void ToggleSmoothValueState(bool newValue)
-    {
-        _smoothValues = newValue;
-    }
-
-    public void ToggleLerpState(bool newValue)
-    {
-        _lerpValues = newValue;
-    }
 }
