@@ -12,6 +12,8 @@ public sealed class CompassController : MonoBehaviour
 
     [SerializeField]
     private float _compassThreshold = 4;
+    [SerializeField]
+    private float _lerpTime = 0.1f;
 
     [SerializeField]
     private Image _imageCompassArrow;
@@ -20,6 +22,9 @@ public sealed class CompassController : MonoBehaviour
 
     [SerializeField]
     private bool _smoothValues = false;
+
+    [SerializeField]
+    private bool _lerpValues = false;
 
     private void Start()
     {
@@ -35,12 +40,16 @@ public sealed class CompassController : MonoBehaviour
 #endif
         if (_smoothValues)
         {
-            _deltaHeading = _heading - _rawHeading;
-
-            // convert angle from -180..180° to 0..360°
-            if (_deltaHeading > 180) _deltaHeading -= 360; else if (_deltaHeading < -180) _deltaHeading += 360;
-
-            if (Mathf.Abs(_deltaHeading) > _compassThreshold) _heading = _rawHeading;
+            if (_lerpValues)
+            {
+                _heading = Mathf.LerpAngle(_heading, _rawHeading, _lerpTime);
+            }
+            else
+            {
+                _deltaHeading = _heading - _rawHeading;
+                if (_deltaHeading > 180) _deltaHeading -= 360; else if (_deltaHeading < -180) _deltaHeading += 360;
+                if (Mathf.Abs(_deltaHeading) > _compassThreshold) _heading = _rawHeading;
+            }
         } else
         {
             _heading = _rawHeading;
@@ -59,5 +68,10 @@ public sealed class CompassController : MonoBehaviour
     public void ToggleSmoothValueState(bool newValue)
     {
         _smoothValues = newValue;
+    }
+
+    public void ToggleLerpState(bool newValue)
+    {
+        _lerpValues = newValue;
     }
 }
