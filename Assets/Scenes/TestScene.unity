@@ -1293,8 +1293,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _rawHeading: 0
   _compassThreshold: 4
-  _lerpTime: 50
+  _lerpTime: 2
   _lerpDiv: 0
+  _lerpMinDelta: 1
   _imageCompassArrow: {fileID: 629251006}
   _textCompassAngle: {fileID: 1253781638}
   _smoothValues: 0

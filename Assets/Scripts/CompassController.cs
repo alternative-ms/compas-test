@@ -13,9 +13,11 @@ public sealed class CompassController : MonoBehaviour
     [SerializeField]
     private float _compassThreshold = 4;
     [SerializeField]
-    private float _lerpTime = 50f;
+    private float _lerpTime = 2f;
     [SerializeField]
     private float _lerpDiv = 0f;
+    [SerializeField]
+    private float _lerpMinDelta = 1f;
 
     [SerializeField]
     private Image _imageCompassArrow;
@@ -46,7 +48,7 @@ public sealed class CompassController : MonoBehaviour
             if (_lerpValues)
             {
                 _lerpDiv = Mathf.Abs(_deltaHeading);
-                if (_lerpDiv == 0) _lerpDiv = 0.0001f;
+                if (_lerpDiv > _lerpMinDelta) _lerpDiv = _lerpMinDelta;
                 _heading = Mathf.LerpAngle(_heading, _rawHeading, Time.deltaTime * _lerpTime / _lerpDiv);
             }
             else
