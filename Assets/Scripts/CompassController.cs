@@ -66,7 +66,7 @@ public sealed class CompassController : MonoBehaviour
 
     private void UpdateVisualCompass()
     {
-        _textCompassAngle.text = "" + _heading + "°";
+        _textCompassAngle.text = "" + (int)_heading + "°";
 
         _imageCompassArrow.rectTransform.localEulerAngles = new Vector3(0, 0, _heading);
     }
