@@ -22,7 +22,7 @@ public sealed class CompassController : MonoBehaviour
     [SerializeField]
     private Image _imageCompassArrow;
     [SerializeField]
-    private Text _textCompassAngle;
+    private TMPro.TextMeshProUGUI _textCompassAngle;
 
     [SerializeField]
     private bool _smoothValues = true;
