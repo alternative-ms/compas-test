@@ -9,3 +9,5 @@ Test 7 - https://youtu.be/4MaSVAjeNu4
 Test 9 - https://youtu.be/pqjAqt-z948
 --
 Test 11 - https://youtu.be/coLm8mgeZQY - Gyroscope Test 1
+--
+Test 13 - https://youtu.be/h4WNR1vLou8 - Device orientation test
