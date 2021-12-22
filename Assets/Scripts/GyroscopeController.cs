@@ -13,6 +13,8 @@ public sealed class GyroscopeController : MonoBehaviour
     private Gyroscope _gyroscope;
     private Quaternion _debugRotation = new Quaternion(0, 0, 1, 0);
     private bool _gyroscopeEnabled = false;
+    private bool _needFixRotation = false;
+
     private void Start()
     {
         if (!Application.isEditor)
@@ -38,9 +40,14 @@ public sealed class GyroscopeController : MonoBehaviour
             if (_gyroscopeEnabled)
             {
                 _textGyroscope.text = "Gyroscope : " + "\nX : " + _gyroscope.attitude.x + "\nY : " + _gyroscope.attitude.y + "\nZ : " + _gyroscope.attitude.z + "\nW : " + _gyroscope.attitude.w;
-                _debugGizmoCube.localRotation = _gyroscope.attitude * _debugRotation;
+                if (_needFixRotation) _debugGizmoCube.localRotation = _gyroscope.attitude * _debugRotation; else _debugGizmoCube.localRotation = _gyroscope.attitude;
             }
         }
+    }
+
+    public void ToggleRotatrionFix(bool newValue)
+    {
+        _needFixRotation = newValue;
     }
 
 }
