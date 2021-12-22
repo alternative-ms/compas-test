@@ -11,9 +11,7 @@ public sealed class GyroscopeController : MonoBehaviour
     private Transform _debugGizmoCube;
 
     private Gyroscope _gyroscope;
-    private Quaternion _debugRotation = new Quaternion(0, 0, 1, 0);
     private bool _gyroscopeEnabled = false;
-    private bool _needFixRotation = false;
 
     private void Start()
     {
@@ -39,15 +37,42 @@ public sealed class GyroscopeController : MonoBehaviour
         {
             if (_gyroscopeEnabled)
             {
+                _debugGizmoCube.localRotation = _gyroscope.attitude;
                 _textGyroscope.text = "Gyroscope : " + "\nX : " + _gyroscope.attitude.x + "\nY : " + _gyroscope.attitude.y + "\nZ : " + _gyroscope.attitude.z + "\nW : " + _gyroscope.attitude.w;
-                if (_needFixRotation) _debugGizmoCube.localRotation = _gyroscope.attitude * _debugRotation; else _debugGizmoCube.localRotation = _gyroscope.attitude;
+
+                float angleX = _debugGizmoCube.localEulerAngles.x; /* convert from 0..360° to -180°..180° */ if (angleX > 180) angleX -= 180; if (angleX < -180) angleX += 180;
+                float angleY = _debugGizmoCube.localEulerAngles.y; /* convert from 0..360° to -180°..180° */ if (angleY > 180) angleY -= 180; if (angleY < -180) angleY += 180;
+                float angleZ = _debugGizmoCube.localEulerAngles.z; /* convert from 0..360° to -180°..180° */ if (angleZ > 180) angleZ -= 180; if (angleZ < -180) angleZ += 180;
+
+                _textGyroscope.text += "\nGizmo : " + "\nX : " + angleX + "\nY : " + angleY + "\nZ : " + angleZ;
             }
         }
     }
 
-    public void ToggleRotatrionFix(bool newValue)
-    {
-        _needFixRotation = newValue;
-    }
+    //on table, portrait, vertical
+    // x -0.007(7..8)
+    // y -0.006(3..5)
+    // z -0.923(4..5)
+    // w 0.38(1..2)
+
+    //on table, portrait, horizontal
+    // x -0.006(2..3)
+    // y -0.006(1..2)
+    // z -0.43(1..2)
+    // w 0.902(1..2)
+
+    //on table, landscape, horizontal
+    // x 0
+    // y 0.009(2..3)
+    // z 0.940(1..2)
+    // w -0.340(3..5)
+
+    //on table, landscape, vertical
+    // x 0.001(7..8)
+    // y 0.009(5..6)
+    // z 0.902(0..1)
+    // w 0.431(5..7)
+
+    // on table - Z axis fron the screen , like cam direction
 
 }

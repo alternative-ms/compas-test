@@ -30,6 +30,11 @@ public sealed class CompassController : MonoBehaviour
     [SerializeField]
     private bool _lerpValues = true;
 
+    private void Awake()
+    {
+        Screen.sleepTimeout = SleepTimeout.NeverSleep;
+    }
+
     private void Start()
     {
 #if !UNITY_EDITOR
