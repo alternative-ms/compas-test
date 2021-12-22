@@ -9,26 +9,34 @@ public sealed class LocationServiceController : MonoBehaviour
 
     [SerializeField]
     private bool _locationServiceStarted = false;
+    [SerializeField]
+    private bool _locationServiceAborted = false;
 
     [SerializeField]
     private GameObject _permissionPanel;
 
     private int _locationServiceTimeoutSeconds = 10;
+    private float _locationServiceCheckIntervalSeconds = 0.5f;
 
     private void Awake()
     {
-        //_textDebug.text += "\n" + "Awake()";
-        //AskLocationServicePermission();
+        _textDebug.text += "\n" + "Awake()";
     }
+
+    private void OnEnable()
+    {
+        _textDebug.text += "\n" + "OnEnable()";
+      }
 
     private void Start()
     {
         _textDebug.text += "\n" + "Start()";
-        StartLocationService();
+        //StartLocationService();
     }
 
     public void StartLocationService()
     {
+        _permissionPanel.SetActive(false);
         StartCoroutine(StartLocationServiceRoutine());
     }
 
@@ -47,6 +55,7 @@ public sealed class LocationServiceController : MonoBehaviour
             else
             {
                 _textDebug.text += "\n" + "HasUserAuthorizedPermission - FineLocation";
+                _locationServiceStarted = true;
                 return true;
             }
         } else
@@ -60,7 +69,16 @@ public sealed class LocationServiceController : MonoBehaviour
         if (!Input.location.isEnabledByUser)
         {
             _textDebug.text += "\n" + "Waiting to start Location Service";
-            if (CheckLocationServicePermission()) yield break; else ShowPermissionRequestDialog();
+            if (CheckLocationServicePermission())
+            {
+                _locationServiceAborted = false;
+                _locationServiceStarted = true;
+                yield break;
+            } else {
+                _locationServiceAborted = false;
+                _locationServiceStarted = false;
+                ShowPermissionRequestDialog();
+            }
         }
 
         _textDebug.text += "\n" + "Input.location.status : " + Input.location.status;
@@ -103,6 +121,32 @@ public sealed class LocationServiceController : MonoBehaviour
     {
         _textDebug.text += "\n" + "ShowPermissionRequestDialog()";
         _permissionPanel.SetActive(true);
+    }
+
+    public void AbortPermissionDialog()
+    {
+        _textDebug.text += "\n" + "AbortPermissionDialog()";
+
+        _locationServiceAborted = true;
+        _locationServiceStarted = false;
+        _permissionPanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (!_locationServiceStarted)
+        {
+            if (!_locationServiceAborted)
+            {
+                _locationServiceCheckIntervalSeconds -= Time.deltaTime;
+                if (_locationServiceCheckIntervalSeconds <= 0)
+                {
+                    _textDebug.text += "\n" + "Update()";
+                    _locationServiceCheckIntervalSeconds = 0.5f;
+                    StartLocationService();
+                }
+            }
+        }
     }
 
 }
