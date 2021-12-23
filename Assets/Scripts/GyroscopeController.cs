@@ -4,19 +4,21 @@ using UnityEngine;
 
 public sealed class GyroscopeController : MonoBehaviour
 {
-    enum Orientation
-    {
-        parallel,
-        perpendicular,
-    }
+    [SerializeField]
+    private CompassController _compassController;
 
     [SerializeField]
     private TMPro.TextMeshProUGUI _textGyroscope;
 
     private Gyroscope _gyroscope;
     private bool _gyroscopeEnabled = false;
-    private Orientation _previousOrientation = Orientation.parallel;
-    private Orientation _currentOrientation = Orientation.parallel;
+    private CompassController.Orientation _previousOrientation = CompassController.Orientation.parallel;
+    private CompassController.Orientation _currentOrientation = CompassController.Orientation.parallel;
+
+    [SerializeField]
+    private bool _debugSetToParallel = false;
+    [SerializeField]
+    private bool _debugSetToPerpendicular = false;
 
     private void Start()
     {
@@ -38,8 +40,57 @@ public sealed class GyroscopeController : MonoBehaviour
 
     private void Update()
     {
+        if (_debugSetToParallel)
+        {
+            _debugSetToParallel = false;
+            _compassController.UpdateOrientation(CompassController.Orientation.parallel);
+        }
+
+        if (_debugSetToPerpendicular)
+        {
+            _debugSetToPerpendicular = false;
+            _compassController.UpdateOrientation(CompassController.Orientation.perpendicular);
+        }
+
         if (!Application.isEditor)
         {
+
+            if (Input.deviceOrientation == DeviceOrientation.Portrait)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - Portrait";
+                _currentOrientation = CompassController.Orientation.perpendicular;
+            }
+
+            if (Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - PortraitUpsideDown";
+                _currentOrientation = CompassController.Orientation.perpendicular;
+            }
+
+            if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - LandscapeLeft";
+                _currentOrientation = CompassController.Orientation.perpendicular;
+            }
+
+            if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - LandscapeRight";
+                _currentOrientation = CompassController.Orientation.perpendicular;
+            }
+
+            if (Input.deviceOrientation == DeviceOrientation.FaceUp)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - FaceUp";
+                _currentOrientation = CompassController.Orientation.parallel;
+            }
+
+            if (Input.deviceOrientation == DeviceOrientation.FaceDown)
+            {
+                _textGyroscope.text += "\nDeviceOrientation - FaceDown";
+                _currentOrientation = CompassController.Orientation.parallel;
+            }
+
             if (_gyroscopeEnabled)
             {
                 _textGyroscope.text = "Gyroscope : " + "\nX : " + _gyroscope.attitude.x + "\nY : " + _gyroscope.attitude.y + "\nZ : " + _gyroscope.attitude.z + "\nW : " + _gyroscope.attitude.w;
@@ -53,41 +104,26 @@ public sealed class GyroscopeController : MonoBehaviour
                 if ((Mathf.Abs(angleX) >= 50) || (Mathf.Abs(angleY) >= 50))
                 {
                     _textGyroscope.text += "\nThe device is rotated perpendicular to the ground";
-                } else
+                    _currentOrientation = CompassController.Orientation.perpendicular;
+                }
+                else
                 {
                     _textGyroscope.text += "\nThe device is parallel to the ground";
+                    _currentOrientation = CompassController.Orientation.parallel;
                 }
 
-                if (Input.deviceOrientation == DeviceOrientation.Portrait)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - Portrait";
-                }
-
-                if (Input.deviceOrientation == DeviceOrientation.PortraitUpsideDown)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - PortraitUpsideDown";
-                }
-
-                if (Input.deviceOrientation == DeviceOrientation.LandscapeLeft)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - LandscapeLeft";
-                }
-
-                if (Input.deviceOrientation == DeviceOrientation.LandscapeRight)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - LandscapeRight";
-                }
-
-                if (Input.deviceOrientation == DeviceOrientation.FaceUp)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - FaceUp";
-                }
-
-                if (Input.deviceOrientation == DeviceOrientation.FaceDown)
-                {
-                    _textGyroscope.text += "\nDeviceOrientation - FaceDown";
-                }
             }
+
+            CheckUpdateOrientation();
+        }
+    }
+
+    private void CheckUpdateOrientation()
+    {
+        if (_currentOrientation != _previousOrientation)
+        {
+            _previousOrientation = _currentOrientation;
+            _compassController.UpdateOrientation(_currentOrientation);
         }
     }
 

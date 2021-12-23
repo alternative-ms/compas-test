@@ -3,6 +3,12 @@ using UnityEngine.UI;
 
 public sealed class CompassController : MonoBehaviour
 {
+    public enum Orientation
+    {
+        parallel,
+        perpendicular
+    }
+
 #if UNITY_EDITOR
     [SerializeField]
 #endif
@@ -25,10 +31,22 @@ public sealed class CompassController : MonoBehaviour
     private TMPro.TextMeshProUGUI _textCompassAngle;
 
     [SerializeField]
+    private GameObject _compassArrowAddon;
+
+    [SerializeField]
     private bool _smoothValues = true;
 
     [SerializeField]
     private bool _lerpValues = true;
+
+    private float _currentXAngle = 0;
+    private float _startLerpXAngle = 0;
+    private float _parallelXAngle = 0;
+    private float _perpendicularXAngle = 75;
+    private float _lertTime = 0;
+
+    private bool _lerpToParallel = false;
+    private bool _lerpToPerpendicular = false;
 
     private void Awake()
     {
@@ -73,7 +91,54 @@ public sealed class CompassController : MonoBehaviour
     {
         _textCompassAngle.text = "" + (int)_heading + "°";
 
-        _imageCompassArrow.rectTransform.localEulerAngles = new Vector3(0, 0, _heading);
+        if (_lerpToParallel)
+        {
+            _lertTime += Time.deltaTime;
+
+            if (_lertTime >= 1)
+            {
+                _lertTime = 1;
+                _lerpToParallel = false;
+            }
+
+            _currentXAngle = Mathf.LerpAngle(_startLerpXAngle, _parallelXAngle, _lertTime);
+        }
+
+        if (_lerpToPerpendicular)
+        {
+            _lertTime += Time.deltaTime;
+
+            if (_lertTime >= 1)
+            {
+                _lertTime = 1;
+                _lerpToPerpendicular = false;
+            }
+
+            _currentXAngle = Mathf.LerpAngle(_startLerpXAngle, _perpendicularXAngle, _lertTime);
+        }
+
+        _imageCompassArrow.rectTransform.localEulerAngles = new Vector3(_currentXAngle, 0, _heading);
+    }
+
+    public void UpdateOrientation(Orientation newOrientation)
+    {
+        _lertTime = 0;
+
+        _startLerpXAngle = _currentXAngle;
+
+        if (newOrientation == Orientation.parallel)
+        {
+            _lerpToParallel = true;
+            _lerpToPerpendicular = false;
+            _compassArrowAddon.SetActive(false);
+        }
+
+        if (newOrientation == Orientation.perpendicular)
+        {
+            _lerpToPerpendicular = true;
+            _lerpToParallel = false;
+            _compassArrowAddon.SetActive(true);
+        }
     }
 
 }

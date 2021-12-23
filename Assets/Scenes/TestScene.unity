@@ -446,6 +446,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f77812ddf7aa2644bdc27fb2d9b7e09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _compassController: {fileID: 1733840418}
   _textGyroscope: {fileID: 2139212406}
 --- !u!4 &496622890
 Transform:
@@ -2383,6 +2384,7 @@ MonoBehaviour:
   _lerpMinDelta: 1
   _imageCompassArrow: {fileID: 629251006}
   _textCompassAngle: {fileID: 2077920364}
+  _compassArrowAddon: {fileID: 1034369846}
   _smoothValues: 1
   _lerpValues: 1
 --- !u!4 &1733840419
